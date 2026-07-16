@@ -109,6 +109,8 @@ Tailee のリポジトリで Claude Code が作業する際のガイドライン
 - Next.js 16 (App Router) + React 19 + TypeScript + Tailwind CSS v4
 - pnpm（`allowBuilds` は `pnpm-workspace.yaml` に書く。pnpm 11 は build script を承認制で止める）
 - 単一アプリ構成。モノレポではない
+- **Lint は Biome。** ESLint ではない（2026-07-17 決定。個人開発の範囲なら十分、という判断）
+- **Supabase** — DB・認証・画像。参考リポジトリ3つとも Supabase で、書き慣れているのが理由
 
 ```bash
 pnpm install
@@ -116,18 +118,81 @@ PORT=3020 pnpm dev   # 3020。nagara=3006 / admin=3002 と被らせない
 pnpm exec tsc --noEmit
 ```
 
-未導入: Supabase、PWA（Serwist）、GitHub リモート。
+未導入: Supabase、Biome、PWA（Serwist）、GitHub リモート。
 
-## 姉妹リポジトリ
+### 保存先（2026-07-17 決定）
 
-`/Users/piro/Repository/nagara-kaigo` — 同じ作者の介護記録アプリ。
+原価をこちら側に溜めない、が方針。個人開発の規模で動画を自前で持つと回らない。
+
+| 何を | どこに | なぜ |
+| ---- | ------ | ---- |
+| **動画** | **ユーザーの Google Drive** | 原価がゼロ。サービスが死んでもアルバムが残る |
+| **画像**（SNS） | Supabase Storage | 軽い。tuzuri の sharp + WebP 変換パターンが効く |
+| **日記・アカウント** | Supabase | |
+
+- Drive の無料枠は **15GB で Gmail / Photos と共用**（[公式](https://support.google.com/drive/answer/6374270)）。
+  溜まるほど価値が出る製品なので、容量で先に止まる可能性がある。課金のお願いは Google One に向く。
+  ユーザー判断に委ねる方針（「ユーザー側にお好きにどうぞ」）。
+- Drive API のレート制限は個人利用の規模では当たらない（1日 750GB まで）。効くのは容量だけ。
+- ローカル保存は「ユーザーが Drive から自分で落とす」の意味。実装は不要。
+
+### 配信
+
+**最初は本人だけが見られる形にする。** 視聴者が1人ならコストはほぼゼロで、基盤の選択も後回しにできる。
+
+**将来は「誰でも見れる」公開配信をやりたい**（ツイキャスのようにサムネが並び、押すと見られる）。
+ただし帯域は動画と違って**ユーザー側に逃がせない**。人気が出るほど赤字が増える形になる。
+
+#### 却下した案（蒸し返さない）
+
+- **YouTube に配信させ、Tailee は一覧を出すだけ** — かわせない。YouTube Live の受け口は
+  RTMP / RTMPS / HLS / DASH のみで、**外部向けの WebRTC 受け口が無い**
+  （[公式](https://developers.google.com/youtube/v3/live/guides/ingestion-protocol-comparison)）。
+  ブラウザから送るには自前サーバーで WebRTC → RTMP 変換が要り、全映像がそこを通る。
+  入り口の帯域が残る上、見られなくても24時間ぶん払うので **Cloudflare Stream より高くつく**。
+  加えてユーザーにチャンネル開設とライブ配信の有効化を要求することになる。
+- **SkyWay**（nagara が使用）— 無料枠は**商用利用不可**、次が **Enterprise 月額11万円**から
+  （[料金](https://skyway.ntt.com/ja/pricing/)）。ユーザーがゼロの日も出ていく固定費。
+  nagara は施設向けの通話で事業が乗っているので条件が違う。
+
+#### 有力（未決）
+
+- **Cloudflare Stream** — $1 / 1,000分、**配信した分だけ**（[料金](https://developers.cloudflare.com/stream/pricing/)）。
+  視聴者ゼロならタダ。入り口も向こう持ち。赤字が出るのは人が見に来ている時だけ。
+  概算: 10人が毎日1時間で月18ドル、100人なら月2.7万円。回収の仕組みは未定。
+
+## 参考リポジトリ
+
+いずれも同じ作者。技術スタックはこの3つを土台に固める（2026-07-17）。
+**ただし「あちらで使っている」は「Tailee で決まっている」ではない。** 一度それで事故った。
+
+| | パス | 何の参考になるか |
+| --- | --- | --- |
+| **chappie** | `/Users/piro/Repository/chappie` | **形が一番近い。** 単一 Next.js 16 アプリ、Biome、Supabase、`use-ear` 入り |
+| **nagara-kaigo** | `/Users/piro/Repository/nagara-kaigo` | 音声まわり。ウェイクワード、文字起こし、音声からの抽出 |
+| **tuzuri** | `/Users/piro/Repository/tuzuri` | 画像のアップロード経路 |
+
+### chappie
+
+Tailee と同じ単一アプリ構成。`_components/` 規約、`ActionResult` を返す Server Actions、
+`next.config.ts` のセキュリティヘッダ、Biome + lefthook + commitlint + knip + secretlint の周辺整備。
+
+### nagara-kaigo（音声）
+
 **ウェイクワード（Vosk）、AmiVoice のリアルタイム文字起こし、音声からの記録抽出は、あちらで一度通っている。**
 同種の実装をする前に必ずあちらを読む。特に:
 
 - `apps/nagara/src/stores/transcription-store.ts` — AmiVoice WebSocket
-- `apps/nagara/src/stores/wake-word-store.ts` — ウェイクワード検知
+- `apps/nagara/src/stores/wake-word-store.ts` — ウェイクワード検知（実体は `wake-word-listener-vosk.tsx`）
 - Vosk モデルは 47MB が下限（削減案は検討済みで全滅）
 - ウェイクワードの誤発火は「よくある語」が原因になる。日常語を避ける
+- `setSinkId({type:"none"})` の Bluetooth 回避と `audioContext.resume()` は忘れると Android で無音になる
+
+### tuzuri（画像）
+
+アップロード時に sharp で WebP 変換 → Supabase Storage。GIF は変換せず素通し。
+パスを `{user.id}/{entityId}/{uuid}.webp` にして Storage の RLS を成立させる。
+`apps/web/src/app/[locale]/(auth)/works/[workId]/actions.ts` を読む。
 
 ## 進め方
 
