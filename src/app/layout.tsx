@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Header } from "./_components/header";
 import { AppSidebar } from "./_components/nav/app-sidebar";
 import { FooterNav } from "./_components/nav/footer-nav";
 import { ThemeProvider } from "./_components/theme-provider";
@@ -37,11 +38,12 @@ export default function RootLayout({
         <ThemeProvider>
           <TooltipProvider>
             <SidebarProvider>
+              <Header />
               <AppSidebar />
-              <SidebarInset className="flex min-h-svh flex-col">
+              <SidebarInset className="mt-14 flex min-w-0 flex-col">
                 {children}
-                <FooterNav />
               </SidebarInset>
+              <FooterNav />
             </SidebarProvider>
           </TooltipProvider>
         </ThemeProvider>
