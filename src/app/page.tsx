@@ -1,5 +1,5 @@
-import { Standby } from "./_components/standby";
+import { Home } from "./_components/home";
 
-export default function Home() {
-  return <Standby />;
+export default function Page() {
+  return <Home />;
 }
