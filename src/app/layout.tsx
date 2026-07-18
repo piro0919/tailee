@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Nav } from "./_components/nav";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { AppSidebar } from "./_components/nav/app-sidebar";
+import { FooterNav } from "./_components/nav/footer-nav";
 import { ThemeProvider } from "./_components/theme-provider";
 
 const geistSans = Geist({
@@ -30,10 +33,17 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning={true}
     >
-      <body className="flex min-h-full flex-col">
+      <body className="min-h-full">
         <ThemeProvider>
-          {children}
-          <Nav />
+          <TooltipProvider>
+            <SidebarProvider>
+              <AppSidebar />
+              <SidebarInset className="flex min-h-svh flex-col">
+                {children}
+                <FooterNav />
+              </SidebarInset>
+            </SidebarProvider>
+          </TooltipProvider>
         </ThemeProvider>
       </body>
     </html>

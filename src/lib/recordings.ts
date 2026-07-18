@@ -35,6 +35,14 @@ export function getServerRecordings(): FeedItem[] {
   return EMPTY;
 }
 
+/** 撮った時刻を、仮データと同じ「タイムゾーンを持たない壁時計」の形に揃える。 */
+export function wallClockNow(): string {
+  const now = new Date(Date.now());
+  const pad = (value: number) => String(value).padStart(2, "0");
+
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+}
+
 export function addRecording(item: FeedItem): void {
   recordings = [item, ...recordings];
 
