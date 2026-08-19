@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tailee
 
-## Getting Started
+**A pet-life album that fills itself up.**
 
-First, run the development server:
+Nobody thinks to film their dog eating dinner — you never plan to, so you never do.
+Tailee is built around that gap. A single day of it means nothing; a year of it does.
+A dog gets roughly ten thousand dinners, and that finiteness is the point of the product.
+
+## Status
+
+**On hold since 2026-07-19.** The design assumed an old phone left running in one spot,
+and nothing in the market solves keeping such a device awake without pinning the screen on.
+Battery swelling is a documented failure mode for that setup, and the hardest part of the
+idea turned out to be the same part that made it different — so there is no version of this
+that drops the stationary device and still stands apart from a general photo app.
+
+That conclusion came from research, not measurement. Anyone picking this up again should
+start by leaving a phone running overnight and watching what the battery does, not by
+writing code. See `CLAUDE.md` for the full record, including the paths already ruled out.
+
+## What is here
+
+A Next.js prototype of the shell: a feed that mixes photos, video, and diary entries in one
+reverse-chronological stream, a recorder reachable from the mobile footer and the desktop
+sidebar, and the live / social / profile tabs stubbed out.
+
+- **Wake word** — recording was meant to start by voice, since your hands are holding a food
+  bowl. `src/lib/wake-words.ts` holds the candidates and the constraints they have to meet.
+- **Diary** — drafted from what you already say out loud to your pet, never from narration
+  you are asked to perform.
+- **Storage** — not built. Recordings live in memory as blob URLs and vanish on reload.
+
+## Built with
+
+Next.js, React, TypeScript, shadcn/ui, Tailwind CSS.
+
+## Development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## License
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
