@@ -51,6 +51,9 @@ importers:
       '@biomejs/biome':
         specifier: ^2.5.4
         version: 2.5.4
+      '@piro0919/biome-config':
+        specifier: github:piro0919/biome-config#v1.0.0
+        version: https://codeload.github.com/piro0919/biome-config/tar.gz/0545bc1c5f5ff02a363cf1d0d84cf9a8c7c7b00f(@biomejs/biome@2.5.4)
       '@tailwindcss/postcss':
         specifier: ^4
         version: 4.3.2
@@ -538,6 +541,12 @@ packages:
   '@nodelib/fs.walk@1.2.8':
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
+
+  '@piro0919/biome-config@https://codeload.github.com/piro0919/biome-config/tar.gz/0545bc1c5f5ff02a363cf1d0d84cf9a8c7c7b00f':
+    resolution: {gitHosted: true, tarball: https://codeload.github.com/piro0919/biome-config/tar.gz/0545bc1c5f5ff02a363cf1d0d84cf9a8c7c7b00f}
+    version: 1.0.0
+    peerDependencies:
+      '@biomejs/biome': ^2.1.0
 
   '@radix-ui/number@1.1.2':
     resolution: {integrity: sha512-ceTwaxc4I5IOi97DgCotl3pqiyRGvffcc0oOsE2dQYaJOFIDsDt4VWG6xEbg1QePv9QWausCEIppud/tJ1wNig==}
@@ -3121,6 +3130,10 @@ snapshots:
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.20.1
+
+  '@piro0919/biome-config@https://codeload.github.com/piro0919/biome-config/tar.gz/0545bc1c5f5ff02a363cf1d0d84cf9a8c7c7b00f(@biomejs/biome@2.5.4)':
+    dependencies:
+      '@biomejs/biome': 2.5.4
 
   '@radix-ui/number@1.1.2': {}
 
